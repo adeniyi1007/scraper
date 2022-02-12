@@ -60,45 +60,88 @@ foreach ($scrape_from as $scrape_site => $url) {
                     
                     echo "<div style='margin-left:10%'>
                     <h6>Scrapped From: $scrapeURL </h6>";
-                    if(strpos($model_title,"Searching, please wait...") !=true){
+                    if(!$html->find('span.copy-text.bottom-buffer')){
                         echo "<h3 class='text-primary'>$model_title</h3>";
-                    }else{
+                        echo "</div>";
+
+                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                        echo "<tr class='bg-dark text-light'>
+                                <td>Image</td>
+                                <td>Title & Description</td>
+                                <td>Scrapred Price</td>
+                                <td>30% Off Price</td>
+                        ";
+                            foreach($html->find('div.js-ua-km-partrow') as $part) {
+                                $item['title'] =$item_title    = $part->find('div.seo-desc h3', 0)->plaintext;
+                                $item['price'] =$item_price     = $part->find('p.nf-value strong', 0);
+                                $item['description'] =$item_desc    = $part->find('p.copy-text', 0)->plaintext;
+                                $item['img'] =$item_img = $part->find('img.seo-part-image', 0)->src;
+                                $partList[] = $item;
+    
+                                // take 30 % off
+                                $item_price_percent=$item_price;
+                                if(!empty($item_price)){
+                                    (int) $item_price=str_replace("$","",$item_price);
+                                    $item_price_percent=$item_price - ($item_price*0.3);
+                                }
+                                echo "<tr>";
+                                echo "<td> <img src='$item_img' height='100px' /></td>";
+                                echo "<td> <h3>$item_title</h3>
+                                        <p>$item_desc</p>
+                                    </td>";
+                                echo "<td> $item_price</td>";
+                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                echo "</tr>";
+                            }
+    
+                        echo "</table>";
+                    }elseif (!empty($html->find('span.copy-text.bottom-buffer'))) {
+                        echo "<h3 class='text-primary'>$model_title</h3>";
+                        echo "</div>";
+                        
+
+                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                        echo "<tr class='bg-dark text-light'>
+                                <td>Image</td>
+                                <td>Title & Description</td>
+                                <td>Scrapred Price</td>
+                                <td>30% Off Price</td>
+                        ";
+                            foreach($html->find('ul.popular-parts__parts-list li') as $part) {
+                                $item['title'] =$item_title    = $part->find('h3.part-name', 0)->plaintext;
+                                $dollar = $part->find('div.price-details div.price-details__price div.price span.dollar', 0)->plaintext;
+                                $cents = $part->find('div.price-details div.price-details__price div.price span.cents', 0)->plaintext;
+                                $item_price = $dollar.$cents;
+                                $item['price'] =$item_price;
+                                $item['description'] =$item_desc    = $part->find('div.part-desc', 0)->plaintext;
+                                // $item['img'] =$item_img = $part->find('img#PageContent_rPopularParts_StockImage_0', 0)->src;
+                                $item['img'] = $item_img = "";
+                                $partList[] = $item;
+    
+                                // take 30 % off
+                                $item_price_percent=$item_price;
+                                if(!empty($item_price)){
+                                    (int) $item_price=str_replace("$","",$item_price);
+                                    $item_price_percent=$item_price - ($item_price*0.3);
+                                }
+                                echo "<tr>";
+                                echo "<td> <img src='$item_img' height='100px' /></td>";
+                                echo "<td> <h3>$item_title</h3>
+                                        <p>$item_desc</p>
+                                    </td>";
+                                echo "<td> $item_price</td>";
+                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                echo "</tr>";
+                            }
+    
+                        echo "</table>";
+                    }
+                    
+                    else{
                         echo "<div style='margin-left:10%'>
                         <h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
                     }
-                    echo "</div>";
 
-                    echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-                    echo "<tr class='bg-dark text-light'>
-                            <td>Image</td>
-                            <td>Title & Description</td>
-                            <td>Scrapred Price</td>
-                            <td>30% Off Price</td>
-                    ";
-                        foreach($html->find('div.js-ua-km-partrow') as $part) {
-                            $item['title'] =$item_title    = $part->find('div.seo-desc h3', 0)->plaintext;
-                            $item['price'] =$item_price     = $part->find('p.nf-value strong', 0)->plaintext;
-                            $item['description'] =$item_desc    = $part->find('p.copy-text', 0)->plaintext;
-                            $item['img'] =$item_img = $part->find('img.seo-part-image', 0)->src;
-                            $partList[] = $item;
-
-                            // take 30 % off
-                            $item_price_percent=$item_price;
-                            if(!empty($item_price)){
-                                (int) $item_price=str_replace("$","",$item_price);
-                                $item_price_percent=$item_price - ($item_price*0.3);
-                            }
-                            echo "<tr>";
-                            echo "<td> <img src='$item_img' height='100px' /></td>";
-                            echo "<td> <h3>$item_title</h3>
-                                    <p>$item_desc</p>
-                                </td>";
-                            echo "<td> $item_price</td>";
-                            echo "<td> <b style='color:green'>$item_price_percent</b></td>";
-                            echo "</tr>";
-                        }
-
-                    echo "</table>";
                         break;
                     case "reliablepart":
                         @$model_title=$html->find('h1.mainHeading', 0)->plaintext;

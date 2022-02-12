@@ -14,29 +14,32 @@
 
 require 'tool/simple_html_dom.php';
 
-echo $html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=36361222101&SearchMethod=standard')
-// $title = $html->find('title', 0);
-// $image = $html->find('img', 0);
+$html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=GUD24ESMJ0WW&SearchMethod=standard');
+$title = $html->find('title', 0);
+$image = $html->find('img', 0);
 
 // echo $html->plaintext."<br>\n";
 // echo $image->src;
 
-// $scrape_from= array(
-//     'easyappliance'=> "https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=[SEARCH]&SearchMethod=standard",
-//     'reliablepart'=> "https://www.reliableparts.ca/search?q=[SEARCH]",
-//     'partsselect'=> "https://www.partselect.ca/Models/[SEARCH]/?SourceCode=11",
-//     'atlanticappliance'=> "https://www.zohoinventory?q=[SEARCH]",
-// );
+$scrape_from= array(
+    'easyappliance'=> "https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=[SEARCH]&SearchMethod=standard",
+    'reliablepart'=> "https://www.reliableparts.ca/search?q=[SEARCH]",
+    'partsselect'=> "https://www.partselect.ca/Models/[SEARCH]/?SourceCode=11",
+    'atlanticappliance'=> "https://www.zohoinventory?q=[SEARCH]",
+);
 
-// echo $html = file_get_html('https://www.partselect.ca/Appliance-Parts.htm?source=gaws&gclid=EAIaIQobChMI_oXunYfT9QIVXfbjBx3eJQdHEAAYASAAEgLG7vD_BwE')->plaintext;
+// echo $html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=36361222101&SearchMethod=standard')->plaintext;
+
+$price = $html->find('#PageContent_rPopularParts_StockImage_0', 0)->plaintext;
+echo $price;
 
 // Find all article blocks
-// foreach($html->find('div.article') as $article) {
-//     $item['title']     = $article->find('div.title', 0)->plaintext;
-//     $item['intro']    = $article->find('div.intro', 0)->plaintext;
-//     $item['details'] = $article->find('div.details', 0)->plaintext;
-//     $articles[] = $item;
-// }
+foreach($html->find('div.article') as $article) {
+    $item['title']     = $article->find('div.title', 0)->plaintext;
+    $item['intro']    = $article->find('div.intro', 0)->plaintext;
+    $item['details'] = $article->find('div.details', 0)->plaintext;
+    $articles[] = $item;
+}
 
 // print_r($partList);
 
