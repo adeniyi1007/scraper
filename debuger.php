@@ -14,7 +14,9 @@
 
 require 'tool/simple_html_dom.php';
 
-$html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=GUD24ESMJ0WW&SearchMethod=standard');
+// $html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=36361222101&SearchMethod=standard');
+$html = file_get_html('https://www.partselect.ca/Models/36361222101/?SourceCode=11');
+
 $title = $html->find('title', 0);
 $image = $html->find('img', 0);
 
@@ -29,9 +31,14 @@ $scrape_from= array(
 );
 
 // echo $html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=36361222101&SearchMethod=standard')->plaintext;
-
-$price = $html->find('#PageContent_rPopularParts_StockImage_0', 0)->plaintext;
+// $html->find('div.mega-m__part__price', 0)->first_child()->innertext = "";
+// $price = $html->find('div.mega-m__part__price', 0)->plaintext;
+$price = $html->find('div.mega-m__part__price span.price__currency', 0)->outertext = "";
+// $p = $html->find('div.mega-m__part__price', 0)->plaintext;
 echo $price;
+// echo $p;
+// $a = explode('$',$price);
+// echo (int) $a[1];
 
 // Find all article blocks
 foreach($html->find('div.article') as $article) {
