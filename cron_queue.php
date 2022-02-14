@@ -17,7 +17,7 @@ if (mysqli_num_rows($sql) > 0) {
         $updateQuery="UPDATE queue SET status='2' WHERE id = $id ";
         $updateSql = mysqli_query($connection, $updateQuery);
         $model = $row['data'];
-            $url = "index.php?s=".$model."&scrapeupload=1";
+            $url = "https://aascraper.xyz/?submit=1&s=$model&scrapeupload=1";
  
             $curl = curl_init();
             

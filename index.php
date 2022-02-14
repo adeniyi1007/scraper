@@ -79,7 +79,7 @@ if(isset($_GET["submit"])){
             }
         }
     }
-    if ($mode == 'scrape') {
+    if ($mode == 'scrape' || $mode == 'scrapeupload') {
         
     
     // $search="36361222101";
@@ -349,7 +349,9 @@ if(isset($_GET["submit"])){
 
 }
 
-if(isset($_GET["scrapeupload"])){
+if($mode == 'scrapeupload'){
+
+    echo "<h2>Upload Status Section </h2>";
     require("uploader.php");
 
     // check which source to upload 
@@ -371,12 +373,24 @@ if(isset($_GET["scrapeupload"])){
     $total=count($dataToUpload);
     if($total>0){
         // $partList=$dataToUpload;
+        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+        echo "<tr class='bg-dark text-light'>
+                <td>Title & Description</td>
+                <td>Uploaded 30% Off Price</td>
+                <td>Status</td>
+        ";
         foreach($dataToUpload as $part){
             $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$search,true);
             if($upload){
-                echo "".$part["title"] ." is uplaoded".PHP_EOL;
+                echo "<tr>
+                        <td>".$part["title"] ." </td>
+                        <td>".$part["price"] ." </td>
+                        <td>Uploaded to Zoho Inventory </td>
+                    </tr>";
             }
         }
+
+        echo "</table>";
     }
 
 }
