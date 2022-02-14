@@ -20,6 +20,7 @@
   <option value="scrape" selected>Scrape Mode Only - </option>
   <option value="scrapequeue" >Scrape & Queue for Upload</option>
   <option value="scrapeupload">Scrape & Upload Now</option>
+  <option value="viewqueue">View Queue</option>
   </select>
   <input type="text" name="s" class="form-control" placeholder="Enter Model Number">
   <button class="btn btn-outline-secondary" id="submitButton" type="submit">Scrape Now</button>
@@ -50,7 +51,17 @@ if(isset($_GET["s"])){
     // $search="36361222101";
     $search=$_GET["s"];
 
-foreach ($scrape_from as $scrape_site => $url) {
+    $easypart_has_data=false;
+    $reliablepart_has_data=false;
+    $partsselect_has_data=false;
+
+    $item=array();
+    $easyApplicaneItem=array();
+    $reliablepartItem=array();
+    $partsselectItem=array();
+    
+    foreach ($scrape_from as $scrape_site => $url) {
+    $item=array();
 
         $scrapeURL=str_replace("[SEARCH]",$search,$url);
         $html = file_get_html($scrapeURL);
@@ -78,7 +89,8 @@ foreach ($scrape_from as $scrape_site => $url) {
                                 $item['price'] =$item_price     = $part->find('p.nf-value strong', 0);
                                 $item['description'] =$item_desc    = $part->find('p.copy-text', 0)->plaintext;
                                 $item['img'] =$item_img = $part->find('img.seo-part-image', 0)->src;
-                                $partList[] = $item;
+                                $item['part_no'] ="";
+                                $easyApplicaneItem[] = $item;
     
                                 // take 30 % off
                                 $item_price_percent=$item_price;
@@ -121,7 +133,8 @@ foreach ($scrape_from as $scrape_site => $url) {
                                 $item['price'] =$item_price;
                                 $item['description'] =$item_desc    = $part->find('div.part-desc', 0)->plaintext;
                                 $item['img'] = $item_img = $part->find('a.part-photo img', 0)->src;
-                                $partList[] = $item;
+                                $item['part_no'] ="";
+                                $easyApplicaneItem[] = $item;
     
                                 // take 30 % off
                                 $item_price_percent=$item_price;
@@ -159,7 +172,9 @@ foreach ($scrape_from as $scrape_site => $url) {
                                 $item['price'] = $item_price = $part->find('div.total-price', 0)->plaintext;
                                 $item['description'] =$item_desc    = $part->find('div.part-details', 0)->plaintext;
                                 $item['img'] = $item_img = "";
-                                $partList[] = $item;
+                                $item['part_no'] ="";
+                                $easyApplicaneItem[] = $item;
+
     
                                 // take 30 % off
                                 $item_price_percent=$item_price;
@@ -213,8 +228,10 @@ foreach ($scrape_from as $scrape_site => $url) {
                             $item['price'] =$item_price     = $part->find('div.product-price', 0)->plaintext;
                             $item['description'] =$item_desc    = $part->find('div.item-details', 0)->plaintext;
                             $item['img'] =$item_img =explode(')', explode('(',$part->find('div.product-image a', 0)->style)[1])[0] ;
-                            
+                            $item['part_no'] ="";
                             $partList[] = $item;
+                            $reliablepartItem[] = $item;
+
                             
                             // take 30 % off
                             $item_price_percent=$item_price;
@@ -268,7 +285,8 @@ foreach ($scrape_from as $scrape_site => $url) {
                                 $str = $str->plaintext;
                                 $item['description'] =$item_desc    = $str;
                                 $item['img'] =$item_img = $part->find('a.mega-m__part__img img', 0)->getAttribute('data-src');
-                                $partList[] = $item;
+                                $item['part_no'] ="";
+                                $partsselectItem[] = $item;
 
                                 // take 30 % off
                                 $item_price_percent=$item_price;
@@ -291,6 +309,39 @@ foreach ($scrape_from as $scrape_site => $url) {
                             break;
                     }
 }
+
+if(isset($_GET["scrapeupload"])){
+    require("uploader.php");
+
+    // check which source to upload 
+    $dataToUpload=array();
+    
+    if(count($partsselectItem)>0){
+        $dataToUpload=$partsselectItem;
+    }
+
+    else if(count($easyApplicaneItem)>0){
+        $dataToUpload=$easyApplicaneItem;
+    }
+
+    else if(count($reliablepartItem)>0){
+        $dataToUpload=$reliablepartItem;
+    }
+    
+
+    $total=count($dataToUpload);
+    if($total>0){
+        $part=$dataToUpload;
+        foreach($partList as $part){
+            $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$part["part_no"],$search,true);
+            if($upload){
+                echo "".$part["title"] ." is uplaoded".PHP_EOL;
+            }
+        }
+    }
+
+}
+
 
 }
 
