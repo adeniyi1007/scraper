@@ -1,5 +1,6 @@
 <?php
-echo uploadItem("Item Mathew From Script 4029","1000","Just a desc","imgLink","partNo","ModelNum",true);
+// just for test purpose, to test remove te underscrore
+// echo upload___Item("Item Mathew From Script 4029","1000","Just a desc","imgLink","partNo","ModelNum",true);
 
 function uploadItem($item_name,$item_price,$item_desc,$item_img,$item_part_no,$item_model_num,$uploadScrapedData=false){
     
