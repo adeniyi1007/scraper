@@ -9,8 +9,16 @@ if (mysqli_num_rows($sql) > 0) {
         if ($row['status'] == '1') {
             $model = $row['data'];
             $url = "index.php?s=".$model."&scrapenow=1&uploadnow=1";
-            echo $url;
-            echo '</br>';
+ 
+            $curl = curl_init();
+            
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            
+            $data = curl_exec($curl);
+            
+            curl_close($curl);
         }
     }
 }
