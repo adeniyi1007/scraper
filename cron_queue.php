@@ -5,18 +5,15 @@ include_once "config.php";
 $query = "SELECT * FROM queue LIMIT 0, 20";
 $sql = mysqli_query($connection, $query);
 
-// print_r($id);
-// echo $id;
 if (mysqli_num_rows($sql) > 0) {
      
     // UPDATE status=2 ( for all returned id);
-    
-   
+       
     while ($row = $sql->fetch_assoc()) {
         // array_push($id, $row['id']);
         if ($row['status'] == '1') {
         $id = $row['id']; 
-        echo $row['id'];
+        // echo $row['id'];
         $updateQuery="UPDATE queue SET status='2' WHERE id = $id ";
         $updateSql = mysqli_query($connection, $updateQuery);
         $model = $row['data'];
