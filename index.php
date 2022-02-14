@@ -14,15 +14,15 @@
 <h1> Atlantic Appliance Scraper Tool </h1>
 <p>This tool will scrape and upload parts to Zoho Inventory -> Amazon</p>
 
-<form class='w-50 mx-auto' action="" method="get">
+<form class='w-50 mx-auto' action="queue_upload.php" method="get">
 <div class="input-group mb-3">
-  <select class="form-control" name="mode">
-  <option value="Scrape">Scrape Mode Only - </option>
-  <option value="scrapequeue">Scrape & Queue for Upload</option>
+  <select class="form-control" id="options" name="mode" onChange = "update()">
+  <option value="scrape" selected>Scrape Mode Only - </option>
+  <option value="scrapequeue" >Scrape & Queue for Upload</option>
   <option value="scrapeupload">Scrape & Upload Now</option>
   </select>
   <input type="text" name="s" class="form-control" placeholder="Enter Model Number">
-  <button class="btn btn-outline-secondary" type="submit">Scrape Now</button>
+  <button class="btn btn-outline-secondary" id="submitButton" type="submit">Scrape Now</button>
 </div>
 </form>
 </center>
@@ -307,6 +307,18 @@ foreach ($scrape_from as $scrape_site => $url) {
 // print_r($partList);
 
 ?>
+<script type="text/javascript">
+			function update() {
+				var select = document.getElementById('options');
+                var button = document.getElementById('submitButton');
+				var option = select.options[select.selectedIndex];
+                (option.value == "scrapequeue") ? button.innerText = "Queue and Upload Now":
+                (option.value == "scrapeupload") ? button.innerText = "Upload Now":
+                                                    button.innerText = "Scrape Now"
+                
+			}
 
+			update();
+</script>
 </body>
 </html>
