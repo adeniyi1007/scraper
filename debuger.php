@@ -33,7 +33,7 @@ $scrape_from= array(
 // echo $html = file_get_html('https://www.easyapplianceparts.ca/Search.ashx?SearchTerm=36361222101&SearchMethod=standard')->plaintext;
 // $html->find('div.mega-m__part__price', 0)->first_child()->innertext = "";
 // $price = $html->find('div.mega-m__part__price', 0)->plaintext;
-$price = $html->find('div.mega-m__part__price span.price__currency', 0)->outertext = "";
+$price = $html->find('div.mb-1', 0)->plaintext;
 // $p = $html->find('div.mega-m__part__price', 0)->plaintext;
 echo $price;
 // echo $p;

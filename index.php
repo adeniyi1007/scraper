@@ -14,16 +14,16 @@
 <h1> Atlantic Appliance Scraper Tool </h1>
 <p>This tool will scrape and upload parts to Zoho Inventory -> Amazon</p>
 
-<form class='w-50 mx-auto' action="queue_upload.php" method="get">
+<form class='w-50 mx-auto' action="" method="get">
 <div class="input-group mb-3">
   <select class="form-control" id="options" name="mode" onChange = "update()">
   <option value="scrape" selected>Scrape Mode Only - </option>
   <option value="scrapequeue" >Scrape & Queue for Upload</option>
   <option value="scrapeupload">Scrape & Upload Now</option>
-  <option value="viewqueue">View Queue</option>
+  <option id="queue_page" value="viewqueue"> View Queue</option>
   </select>
   <input type="text" name="s" class="form-control" placeholder="Enter Model Number">
-  <button class="btn btn-outline-secondary" id="submitButton" type="submit">Scrape Now</button>
+  <button name="submit" class="btn btn-outline-secondary" id="submitButton" type="submit">Scrape Now</button>
 </div>
 </form>
 </center>
@@ -46,7 +46,41 @@ $scrape_from= array(
 );
 
 
-if(isset($_GET["s"])){
+if(isset($_GET["submit"])){
+    include_once "config.php";
+
+    $mode = mysqli_real_escape_string($connection, $_GET['mode']);
+    $models = mysqli_real_escape_string($connection, $_GET['s']);
+
+
+    if ($mode == 'scrapequeue' && !empty($models)) {
+        if (strpos($models, ',')) {
+            $model_array = explode(',', $models);
+            $values = array();
+            foreach ($model_array as $model) {
+                $values[] = "('','".$model."','','','')";
+                
+            }
+            $query = "INSERT INTO 
+                        queue (type, data, attempt, error, upload_date)
+                    VALUES ".implode(',', $values);
+            $sql= mysqli_query($connection, $query);
+            if ($sql) {
+                header('location: queue.php');
+            }
+            
+        } else {
+            $query = "INSERT INTO 
+                        queue (type, data, attempt, error, upload_date)
+                    VALUES ('','".$models."','','','')";
+            $sql= mysqli_query($connection, $query);
+            if ($sql) {
+                header('location: queue.php');
+            }
+        }
+    }
+    if ($mode == 'scrape') {
+        
     
     // $search="36361222101";
     $search=$_GET["s"];
@@ -285,7 +319,10 @@ if(isset($_GET["s"])){
                                 $str = $str->plaintext;
                                 $item['description'] =$item_desc    = $str;
                                 $item['img'] =$item_img = $part->find('a.mega-m__part__img img', 0)->getAttribute('data-src');
-                                $item['part_no'] ="";
+                                $item['part_no'] =$item_part = $part->find('div.mb-1', 0);
+                                ($item_part) ? $item['part_no'] = $item_part = $item_part->plaintext : "";
+                              
+                                // echo $item_part;
                                 $partsselectItem[] = $item;
 
                                 // take 30 % off
@@ -310,6 +347,8 @@ if(isset($_GET["s"])){
                     }
 }
 
+}
+
 if(isset($_GET["scrapeupload"])){
     require("uploader.php");
 
@@ -331,9 +370,9 @@ if(isset($_GET["scrapeupload"])){
 
     $total=count($dataToUpload);
     if($total>0){
-        $part=$dataToUpload;
-        foreach($partList as $part){
-            $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$part["part_no"],$search,true);
+        // $partList=$dataToUpload;
+        foreach($dataToUpload as $part){
+            $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$search,true);
             if($upload){
                 echo "".$part["title"] ." is uplaoded".PHP_EOL;
             }
@@ -365,6 +404,7 @@ if(isset($_GET["scrapeupload"])){
 				var option = select.options[select.selectedIndex];
                 (option.value == "scrapequeue") ? button.innerText = "Queue and Upload Now":
                 (option.value == "scrapeupload") ? button.innerText = "Upload Now":
+                (option.value == "viewqueue") ? window.location.href = "queue.php":
                                                     button.innerText = "Scrape Now"
                 
 			}

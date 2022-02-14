@@ -27,7 +27,7 @@ if (mysqli_num_rows($sql1) > 0) {
     }
    
 }
-$query = "SELECT * FROM queue";
+$query = "SELECT * FROM queue ORDER BY id DESC";
 $sql = mysqli_query($connection, $query);
 if (mysqli_num_rows($sql) > 0) {
     
