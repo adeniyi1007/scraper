@@ -79,160 +79,177 @@ if(isset($_GET["submit"])){
             }
         }
     }
-    if ($mode == 'scrape' || $mode == 'scrapeupload') {
+    if ($mode == 'scrape') {
         
     
-    // $search="36361222101";
-    $search=$_GET["s"];
+        // $search="36361222101";
+        $search=$_GET["s"];
 
-    $easypart_has_data=false;
-    $reliablepart_has_data=false;
-    $partsselect_has_data=false;
+        $easypart_has_data=false;
+        $reliablepart_has_data=false;
+        $partsselect_has_data=false;
 
-    $item=array();
-    $easyApplicaneItem=array();
-    $reliablepartItem=array();
-    $partsselectItem=array();
-    
-    foreach ($scrape_from as $scrape_site => $url) {
-    $item=array();
+        $item=array();
+        $easyApplicaneItem=array();
+        $reliablepartItem=array();
+        $partsselectItem=array();
+        
+        foreach ($scrape_from as $scrape_site => $url) {
+        $item=array();
 
-        $scrapeURL=str_replace("[SEARCH]",$search,$url);
-        $html = file_get_html($scrapeURL);
-            switch($scrape_site){
-                case "easyappliance":
-                    $model_title=$html->find('h1.standard-blue-title',0)->plaintext;
-                    
-                    echo "<div style='margin-left:10%'>
-                    <h6>Scrapped From: $scrapeURL </h6>";
-
-                    /* First Mode for Easy Appliance Website */
-                    if($html->find('div.seo-item.js-ua-km-partrow')){
-                        echo "<h3 class='text-primary'>$model_title</h3>";
-                        echo "</div>";
-
-                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-                        echo "<tr class='bg-dark text-light'>
-                                <td>Image</td>
-                                <td>Title & Description</td>
-                                <td>Scrapred Price</td>
-                                <td>30% Off Price</td>
-                        ";
-                            foreach($html->find('div.js-ua-km-partrow') as $part) {
-                                $item['title'] =$item_title    = $part->find('div.seo-desc h3', 0)->plaintext;
-                                $item['price'] =$item_price     = $part->find('p.nf-value strong', 0);
-                                $item['description'] =$item_desc    = $part->find('p.copy-text', 0)->plaintext;
-                                $item['img'] =$item_img = $part->find('img.seo-part-image', 0)->src;
-                                $item['part_no'] ="";
-                                $easyApplicaneItem[] = $item;
-    
-                                // take 30 % off
-                                $item_price_percent=$item_price;
-                                if(!empty($item_price)){
-                                    $explode = explode('$', $item_price);
-                                    $item_price = (int) $explode[1];
-                                    $item_price_percent=(int) $item_price - ($item_price*0.3);
-                                }
-
-                                echo "<tr>";
-                                echo "<td> <img src='$item_img' height='100px' /></td>";
-                                echo "<td> <h3>$item_title</h3>
-                                        <p>$item_desc</p>
-                                    </td>";
-                                echo "<td><strong> $item_price</strong></td>";
-                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
-                                echo "</tr>";
-                            }
-    
-                        echo "</table>";
-                    } 
-                    /* Second Mode for Easy Appliance Website */
-                    elseif (!empty($html->find('span.copy-text.bottom-buffer'))) {
-                        echo "<h3 class='text-primary'>$model_title</h3>";
-                        echo "</div>";
+            $scrapeURL=str_replace("[SEARCH]",$search,$url);
+            $html = file_get_html($scrapeURL);
+                switch($scrape_site){
+                    case "easyappliance":
+                        $model_title=$html->find('h1.standard-blue-title',0)->plaintext;
                         
-
-                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-                        echo "<tr class='bg-dark text-light'>
-                                <td>Image</td>
-                                <td>Title & Description</td>
-                                <td>Scrapred Price</td>
-                                <td>30% Off Price</td>
-                        ";
-                            foreach($html->find('ul.popular-parts__parts-list li') as $part) {
-                                $item['title'] =$item_title    = $part->find('h3.part-name', 0)->plaintext;
-                                $dollar = $part->find('div.price-details div.price-details__price div.price span.dollar', 0)->plaintext;
-                                $cents = $part->find('div.price-details div.price-details__price div.price span.cents', 0)->plaintext;
-                                $item_price = $dollar.$cents;
-                                $item['price'] =$item_price;
-                                $item['description'] =$item_desc    = $part->find('div.part-desc', 0)->plaintext;
-                                $item['img'] = $item_img = $part->find('a.part-photo img', 0)->src;
-                                $item['part_no'] ="";
-                                $easyApplicaneItem[] = $item;
-    
-                                // take 30 % off
-                                $item_price_percent=$item_price;
-                                if(!empty($item_price)){
-                                    (int) $item_price=str_replace("$","",$item_price);
-                                    $item_price_percent=$item_price - ($item_price*0.3);
-                                }
-                                echo "<tr>";
-                                echo "<td> <img src='$item_img' height='100px' /></td>";
-                                echo "<td> <h3>$item_title</h3>
-                                        <p>$item_desc</p>
-                                    </td>";
-                                echo "<td><strong> $item_price</strong></td>";
-                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
-                                echo "</tr>";
-                            }
-    
-                        echo "</table>";
-                    }
-                    /* Third Mode for Easy Appliance Website */
-                    elseif (!empty($html->find('div.part-info-wrap'))) {
-                        echo "<h3 class='text-primary'>Search result for: ". $search ." </h3>";
-                        echo "</div>";
-                        
-
-                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-                        echo "<tr class='bg-dark text-light'>
-                                <td>Image</td>
-                                <td>Title & Description</td>
-                                <td>Scrapred Price</td>
-                                <td>30% Off Price</td>
-                        ";
-                            foreach($html->find('div.part-info-wrap') as $part) {
-                                $item['title'] =$item_title    = $part->find('h1.standard-blue-title', 0)->plaintext;
-                                $item['price'] = $item_price = $part->find('div.total-price', 0)->plaintext;
-                                $item['description'] =$item_desc    = $part->find('div.part-details', 0)->plaintext;
-                                $item['img'] = $item_img = "";
-                                $item['part_no'] ="";
-                                $easyApplicaneItem[] = $item;
-
-    
-                                // take 30 % off
-                                $item_price_percent=$item_price;
-                                if(!empty($item_price)){
-                                    (int) $item_price=str_replace("$","",$item_price);
-                                    $item_price_percent=$item_price - ($item_price*0.3);
-                                }
-                                echo "<tr>";
-                                echo "<td> <img src='$item_img' height='100px' /></td>";
-                                echo "<td> <h3>$item_title</h3>
-                                        <p>$item_desc</p>
-                                    </td>";
-                                echo "<td><strong> $item_price</strong></td>";
-                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
-                                echo "</tr>";
-                            }
-    
-                        echo "</table>";
-                    }
-                    
-                    else{
                         echo "<div style='margin-left:10%'>
-                        <h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
-                    }
+                        <h6>Scrapped From: $scrapeURL </h6>";
+
+                        /* First Mode for Easy Appliance Website */
+                        if($html->find('div.seo-item.js-ua-km-partrow')){
+                            echo "<h3 class='text-primary'>$model_title</h3>";
+                            echo "</div>";
+
+                            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                            echo "<tr class='bg-dark text-light'>
+                                    <td>Image</td>
+                                    <td>Title & Description</td>
+                                    <td>Scrapred Price</td>
+                                    <td>30% Off Price</td>
+                            ";
+                                foreach($html->find('div.js-ua-km-partrow') as $part) {
+                                    ($part->find('div.seo-desc h3', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('div.seo-desc h3', 0)->plaintext : $item['title'] =$item_title = "";
+                                    
+                                    ($part->find('p.nf-value strong', 0)) ? $item['price'] = $item_price = $part->find('p.nf-value strong', 0) :  $item['price'] = $item_price = "";
+                                    
+                                    ($part->find('p.copy-text', 0)->plaintext) ? $item['description'] =$item_desc    = $part->find('p.copy-text', 0)->plaintext : $item['description'] =$item_desc = "";
+                                    
+                                    ($part->find('img.seo-part-image', 0)->src) ? $item['img'] =$item_img = $part->find('img.seo-part-image', 0)->src : $item['img'] =$item_img = "";
+                                    
+                                    ($part->find('p.nf-value', 0)) ? $item['part_no'] =$item_part     = $part->find('p.nf-value', 0) : $item['part_no'] =$item_part = "";
+                                    
+        
+                                    // take 30 % off
+                                    $item_price_percent=$item_price;
+                                    if(!empty($item_price)){
+                                        $explode = explode('$', $item_price);
+                                        $item['price'] = $item_price = (int) $explode[1];
+                                        $item['discounted_price'] = $item_price_percent=(int) $item_price - ($item_price*0.3);
+                                    }
+                                    
+                                    $easyApplicaneItem[] = $item;
+
+                                    echo "<tr>";
+                                    echo "<td> <img src='$item_img' height='100px' /></td>";
+                                    echo "<td> <h3>$item_title</h3>
+                                            <p>$item_desc</p>
+                                        </td>";
+                                    echo "<td><strong> $item_price</strong></td>";
+                                    echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                    echo "</tr>";
+                                }
+        
+                            echo "</table>";
+                        } 
+                        /* Second Mode for Easy Appliance Website */
+                        elseif (!empty($html->find('span.copy-text.bottom-buffer'))) {
+                            echo "<h3 class='text-primary'>$model_title</h3>";
+                            echo "</div>";
+                            
+
+                            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                            echo "<tr class='bg-dark text-light'>
+                                    <td>Image</td>
+                                    <td>Title & Description</td>
+                                    <td>Scrapred Price</td>
+                                    <td>30% Off Price</td>
+                            ";
+                                foreach($html->find('ul.popular-parts__parts-list li') as $part) {
+                                    ($part->find('h3.part-name', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('h3.part-name', 0)->plaintext : $item['title'] =$item_title = "";
+                                    
+                                    $modelLink = "https://www.easyapplianceparts.ca".$part->find('h3.part-name a', 0)->href;
+                                    $modelPage = file_get_html($modelLink);
+                                    
+                                    ($modelPage->find('h3.part-numbers text', 2)->innertext) ?  $item['part_no']= $item_part = explode(':', $modelPage->find('h3.part-numbers text', 2)->innertext)[1] : $item['part_no']= $item_part = "";
+                                    
+                                    ($part->find('div.part-desc', 0)->plaintext) ? $item['description'] =$item_desc   = $part->find('div.part-desc', 0)->plaintext : $item['description'] =$item_desc = "";
+                                    
+                                    ($part->find('a.part-photo img', 0)->src) ? $item['img'] = $item_img = $part->find('a.part-photo img', 0)->src: $item['img'] = $item_img = "";
+                                    
+                                    ($part->find('div.price-details div.price-details__price div.price span.dollar', 0)->plaintext && $part->find('div.price-details div.price-details__price div.price span.cents', 0)->plaintext) ? $item['price'] =$item_price = $part->find('div.price-details div.price-details__price div.price span.dollar', 0)->plaintext . $part->find('div.price-details div.price-details__price div.price span.cents', 0)->plaintext : $item['price'] =$item_price = "";
+                                   
+        
+                                    // take 30 % off
+                                    $item_price_percent=$item_price;
+                                    if(!empty($item_price)){
+                                        $item['price'] = (int) $item_price=str_replace("$","",$item_price);
+                                        $item['discounted_price'] = $item_price_percent=$item_price - ($item_price*0.3);
+                                    }
+                                    $easyApplicaneItem[] = $item;
+                                    
+                                    echo "<tr>";
+                                    echo "<td> <img src='$item_img' height='100px' /></td>";
+                                    echo "<td> <h3>$item_title</h3>
+                                            <p>$item_desc</p>
+                                        </td>";
+                                    echo "<td><strong> $item_price</strong></td>";
+                                    echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                    echo "</tr>";
+                                }
+        
+                            echo "</table>";
+                        }
+                        /* Third Mode for Easy Appliance Website */
+                        elseif (!empty($html->find('div.part-info-wrap'))) {
+                            echo "<h3 class='text-primary'>Search result for: ". $search ." </h3>";
+                            echo "</div>";
+                            
+
+                            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                            echo "<tr class='bg-dark text-light'>
+                                    <td>Image</td>
+                                    <td>Title & Description</td>
+                                    <td>Scrapred Price</td>
+                                    <td>30% Off Price</td>
+                            ";
+                                foreach($html->find('div.part-info-wrap') as $part) {
+                                    ($part->find('h1.standard-blue-title', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('h1.standard-blue-title', 0)->plaintext : $item['title'] =$item_title = "";
+                                    
+                                    ($part->find('div.total-price', 0)->plaintext) ? $item['price'] = $item_price = $part->find('div.total-price', 0)->plaintext : $item['price'] = $item_price = "";
+                                    
+                                    ($part->find('div.part-details', 0)->plaintext) ? $item['description'] =$item_desc    = $part->find('div.part-details', 0)->plaintext : $item['description'] =$item_desc= "";
+                                    
+                                    ($part->find('h3.part-numbers text', 2)->innertext) ? $item['part_no']= $item_part = explode(':', $part->find('h3.part-numbers text', 2)->innertext)[1] : $item['part_no']= $item_part = "";
+                                   
+                                    $item['img'] = $item_img = "";
+                                    
+                                    // take 30 % off
+                                    $item_price_percent=$item_price;
+                                    if(!empty($item_price)){
+                                        $item['price'] = (int) $item_price=str_replace("$","",$item_price);
+                                        $item['discounted_price'] = $item_price_percent=$item_price - ($item_price*0.3);
+                                    }
+                                    
+                                    $easyApplicaneItem[] = $item;
+                                    
+                                    echo "<tr>";
+                                    echo "<td> <img src='$item_img' height='100px' /></td>";
+                                    echo "<td> <h3>$item_title</h3>
+                                            <p>$item_desc</p>
+                                        </td>";
+                                    echo "<td><strong> $item_price</strong></td>";
+                                    echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                    echo "</tr>";
+                                }
+        
+                            echo "</table>";
+                        }
+                        
+                        else{
+                            echo "<div style='margin-left:10%'>
+                            <h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
+                        }
 
                         break;
                     case "reliablepart":
@@ -245,7 +262,7 @@ if(isset($_GET["submit"])){
                             }else{
                                 echo "<h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
                             }
-                            echo "</div>";
+                        echo "</div>";
 
                         // start table
                         echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
@@ -257,22 +274,31 @@ if(isset($_GET["submit"])){
                         ";
                         
                         foreach($html->find('div.product-box-4col') as $part) {
-                            $item['title'] =$item_title    = $part->find('a.productName', 0)->plaintext;
+                            ($part->find('a.productName', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('a.productName', 0)->plaintext : $item['title'] =$item_title = "";
+
                             $part->find('div.product-price', 0)->children(0)->innertext = "";
-                            $item['price'] =$item_price     = $part->find('div.product-price', 0)->plaintext;
-                            $item['description'] =$item_desc    = $part->find('div.item-details', 0)->plaintext;
-                            $item['img'] =$item_img =explode(')', explode('(',$part->find('div.product-image a', 0)->style)[1])[0] ;
-                            $item['part_no'] ="";
-                            $partList[] = $item;
-                            $reliablepartItem[] = $item;
+
+                            ($part->find('div.product-price', 0)->plaintext) ? $item['price'] =$item_price     = $part->find('div.product-price', 0)->plaintext : $item['price'] =$item_price = "";
+
+                            ($part->find('div.item-details', 0)->plaintext) ? $item['part_no'] = $item_part    = $part->find('div.item-details', 0)->plaintext : $item['part_no'] = $item_part = "";
+
+                            ($part->find('div.product-image a', 0)->style) ? $item['img'] =$item_img =explode(')', explode('(',$part->find('div.product-image a', 0)->style)[1])[0] : $item['img'] =$item_img = "";
+
+                            $item['description'] = $item_desc = "";
+                            
+                            
 
                             
                             // take 30 % off
                             $item_price_percent=$item_price;
                             if(!empty($item_price)){
-                                (int) $item_price=str_replace("$","",$item_price);
-                                $item_price_percent=$item_price - ($item_price*0.3);
+                                $item['price'] = (int) $item_price=str_replace("$","",$item_price);
+                                $item['discounted_price'] = $item_price_percent = $item_price - ($item_price*0.3);
                             }
+                            
+                            $partList[] = $item;
+                            $reliablepartItem[] = $item;
+                            
                             echo "<tr>";
                             echo "<td> <img src='$item_img' height='100px' /></td>";
                             echo "<td> <h3>$item_title</h3>
@@ -286,114 +312,174 @@ if(isset($_GET["submit"])){
                         echo "</table>";
 
                         break;
-                        case "partsselect":
-                            @$model_title=$html->find('h1.title-main', 0)->plaintext;
-                            echo "<div style='margin-left:10%'>
-                                <h6>Scrapped From: $scrapeURL </h6>";
-                                if(strpos($html->plaintext,"No Results Found") !=true){
-                                    echo "<h3 class='text-primary'>$model_title</h3>
-                                    ";
-                                }else{
-                                    echo "<h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
-                                }
-                                echo "</div>";
-    
-                            // start table
-                            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-                            echo "<tr class='bg-dark text-light'>
-                                    <td>Image</td>
-                                    <td>Title & Description</td>
-                                    <td>Scrapred Price</td>
-                                    <td>30% Off Price</td>
-                            ";
-                            
-                            foreach($html->find('div.mega-m__part') as $part) {
-                                $item['title'] =$item_title    = $part->find('a.mega-m__part__name', 0)->plaintext;
-                                $item['price'] =$item_price     = $part->find('div.mega-m__part__price', 0);
-                                ($item_price)?$item['price'] = $item_price = $item_price->plaintext:"";
-                                $str = $part->find('div.d-flex.flex-col', 0);
-                                foreach ($str->children as $child) {
-                                    $child->innertext="";
-                                }
-                                
-                                $str = $str->plaintext;
-                                $item['description'] =$item_desc    = $str;
-                                $item['img'] =$item_img = $part->find('a.mega-m__part__img img', 0)->getAttribute('data-src');
-                                $item['part_no'] =$item_part = $part->find('div.mb-1', 0);
-                                ($item_part) ? $item['part_no'] = $item_part = $item_part->plaintext : "";
-                              
-                                // echo $item_part;
-                                $partsselectItem[] = $item;
-
-                                // take 30 % off
-                                $item_price_percent=$item_price;
-                                if(!empty($item_price)){
-                                    (int) $item_price=str_replace("$","",$item_price);
-                                    $item_price_percent=(int) $item_price - ($item_price*0.3);
-                                }
-                                echo "<tr>";
-                                echo "<td> <img src='$item_img' height='100px' /></td>";
-                                echo "<td> <h3>$item_title</h3>
-                                        <p>$item_desc</p>
-                                    </td>";
-                                echo "<td><strong> $item_price</strong></td>";
-                                echo "<td> <b style='color:green'>$item_price_percent</b></td>";
-                                echo "</tr>";
+                    case "partsselect":
+                        @$model_title=$html->find('h1.title-main', 0)->plaintext;
+                        echo "<div style='margin-left:10%'>
+                            <h6>Scrapped From: $scrapeURL </h6>";
+                            if(strpos($html->plaintext,"No Results Found") !=true){
+                                echo "<h3 class='text-primary'>$model_title</h3>
+                                ";
+                            }else{
+                                echo "<h3 class='text-danger'>No Result Found on $scrape_site for $search</h3>";
                             }
-    
-                            echo "</table>";
-    
-                            break;
+                        echo "</div>";
+
+                        // start table
+                        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                        echo "<tr class='bg-dark text-light'>
+                                <td>Image</td>
+                                <td>Title & Description</td>
+                                <td>Scrapred Price</td>
+                                <td>30% Off Price</td>
+                        ";
+                        
+                        foreach($html->find('div.mega-m__part') as $part) {
+                            ($part->find('a.mega-m__part__name', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('a.mega-m__part__name', 0)->plaintext : $item['title'] =$item_title = "";
+
+                            ($part->find('div.mega-m__part__price', 0)) ? $item['price'] =$item_price     = $part->find('div.mega-m__part__price', 0)->plaintext : $item['price'] =$item_price = "";
+                            
+                            $str = $part->find('div.d-flex.flex-col', 0);
+                            foreach ($str->children as $child) {
+                                $child->innertext="";
+                            }
+                            
+                            ($str->plaintext) ? $item['description'] = $item_desc = $str->plaintext : $item['description'] = $item_desc = "No available Description";
+
+                            ($part->find('a.mega-m__part__img img', 0)->getAttribute('data-src')) ? $item['img'] =$item_img = $part->find('a.mega-m__part__img img', 0)->getAttribute('data-src') : $item['img'] = $item_img = "";
+
+                            ($part->find('div.mb-1 text', 1)->innertext) ? $item['part_no'] =$item_part = $part->find('div.mb-1 text', 1)->innertext : $item['part_no'] = $item_part = "";
+                            
+
+                            // take 30 % off
+                            $item_price_percent=$item_price;
+                            if(!empty($item_price)){
+                                $item['price'] = (int) $item_price=str_replace("$","",$item_price);
+                                $item['discounted_price'] = $item_price_percent=(int) $item_price - ($item_price*0.3);
+                            }
+                            
+                            $partsselectItem[] = $item;
+                            
+                            echo "<tr>";
+                            echo "<td> <img src='$item_img' height='100px' /></td>";
+                            echo "<td> <h3>$item_title</h3>
+                                    <p>$item_desc</p>
+                                </td>";
+                            echo "<td><strong> $item_price</strong></td>";
+                            echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                            echo "</tr>";
+                        }
+
+                        echo "</table>";
+
+                        break;
+                        }
+        }
+        
+        $dataToUpload=array();
+        
+        if(count($partsselectItem)>0){
+            $dataToUpload=$partsselectItem;
+        }
+
+        else if(count($easyApplicaneItem)>0){
+            $dataToUpload=$easyApplicaneItem;
+        }
+
+        else if(count($reliablepartItem)>0){
+            $dataToUpload=$reliablepartItem;
+        }
+
+        $total=count($dataToUpload);
+        if($total>0){
+            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                        echo "<tr class='bg-dark text-light'>
+                                <th>Title</th>
+                                <th>Part Number</th>
+                                <th></th>
+                        ";
+            foreach($dataToUpload as $part){
+                // print_r($part['title']);
+                $title = $part['title'];
+                $part_no = $part['part_no'];
+                $description = $part['description'];
+                $price = $part['price'];
+                $discounted_price = $part['discounted_price'];
+                $image = $part['img'];
+                $status = 'Pending';
+
+                $checkQuery = "SELECT * FROM scraped WHERE model_no = '{$search}' AND part_no = '{$part_no}'";
+                $checkSql = mysqli_query($connection, $checkQuery);
+                
+                if (mysqli_num_rows($checkSql) < 1) {
+                    $uploadQuery = "INSERT INTO scraped (title,model_no,part_no,description,price,discounted_price,image,status) VALUES('{$title}', '{$search}', '{$part_no}', '{$description}', '{$price}', '{$discounted_price}', '{$image}', '{$status}')";
+                    
+                    $uploadSql = mysqli_query($connection, $uploadQuery);
+                    
+                    if ($uploadSql) {
+                        
+                        echo "<tr>
+                            <td>".$title ." </td>
+                            <td>".$part_no ." </td>
+                            <td>Scraped Successfully </td>
+                        </tr>";
+                        
+                    } else {
+                        echo("Error description: " . mysqli_error($connection));
                     }
-}
-
-}
-
-if($mode == 'scrapeupload'){
-
-    echo "<h2>Upload Status Section </h2>";
-    require("uploader.php");
-
-    // check which source to upload 
-    $dataToUpload=array();
-    
-    if(count($partsselectItem)>0){
-        $dataToUpload=$partsselectItem;
-    }
-
-    else if(count($easyApplicaneItem)>0){
-        $dataToUpload=$easyApplicaneItem;
-    }
-
-    else if(count($reliablepartItem)>0){
-        $dataToUpload=$reliablepartItem;
-    }
-    
-
-    $total=count($dataToUpload);
-    if($total>0){
-        // $partList=$dataToUpload;
-        echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
-        echo "<tr class='bg-dark text-light'>
-                <td>Title & Description</td>
-                <td>Uploaded 30% Off Price</td>
-                <td>Status</td>
-        ";
-        foreach($dataToUpload as $part){
-            $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$search,true);
-            if($upload){
-                echo "<tr>
-                        <td>".$part["title"] ." </td>
-                        <td>".$part["price"] ." </td>
-                        <td>Uploaded to Zoho Inventory </td>
-                    </tr>";
+                }
+                
             }
         }
 
-        echo "</table>";
+
+
     }
 
-}
+    if($mode == 'scrapeupload'){
+
+        echo "<h2>Upload Status Section </h2>";
+        require("uploader.php");
+
+        // check which source to upload 
+        $dataToUpload=array();
+        
+        if(count($partsselectItem)>0){
+            $dataToUpload=$partsselectItem;
+        }
+
+        else if(count($easyApplicaneItem)>0){
+            $dataToUpload=$easyApplicaneItem;
+        }
+
+        else if(count($reliablepartItem)>0){
+            $dataToUpload=$reliablepartItem;
+        }
+        
+
+        $total=count($dataToUpload);
+        if($total>0){
+            // $partList=$dataToUpload;
+            echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+            echo "<tr class='bg-dark text-light'>
+                    <td>Title & Description</td>
+                    <td>Uploaded 30% Off Price</td>
+                    <td>Status</td>
+            ";
+            foreach($dataToUpload as $part){
+                $upload=uploadItem($part["title"],$part["price"],$part["description"],$part["img"],$part["part_no"],$search,true);
+                if($upload){
+                    echo "<tr>
+                            <td>".$part["title"] ." </td>
+                            <td>".$part["price"] ." </td>
+                            <td>Uploaded to Zoho Inventory </td>
+                        </tr>";
+                }
+            }
+
+            echo "</table>";
+        }
+
+    }
 
 
 }
