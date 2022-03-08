@@ -256,7 +256,63 @@ if(isset($_GET["submit"])){
                         @$model_title=$html->find('h1#mainHeading', 0)->plaintext;
                         echo "<div style='margin-left:10%'>
                             <h6>Scrapped From: $scrapeURL </h6>";
-                            if(strpos($html->plaintext,"No Results Found") !=true){
+                            if (!empty($html->find('table.modelParts'))) {
+                                echo "<h3 class='text-primary'>Search result for: ". $search ." </h3>";
+                                echo "</div>";
+                                
+    
+                                echo "<table class='table table-responsive table-bordered mx-auto' style='max-width:80%;border-color:black'>";
+                                echo "<tr class='bg-dark text-light'>
+                                        <td>Image</td>
+                                        <td>Title & Description</td>
+                                        <td>Scrapred Price</td>
+                                        <td>30% Off Price</td>
+                                ";
+                                    foreach($html->find('table.modelParts tbody tr') as $part) {
+                                        
+                                        if ($part->find('td.descriptionSearch a.modelImage', 0)) {
+                                            ($part->find('td.descriptionSearch text', 2)) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 2)->plaintext ."first": $item['title'] =$item_title = "";
+
+                                            ($part->find('a.modelImage', 0)) ? $item['img'] = $item_img = $part->find('a.modelImage', 0)->href : $item['img'] = $item_img = "";
+
+                                            ($part->find('td.descriptionSearch a', 1)) ? $item['part_no'] = $item_part = $part->find('td.descriptionSearch a', 1)->plaintext : $item['part_no'] = $item_part = "";
+                                            echo $item_title . "first";
+                                        } else {
+                                            $item['img'] = $item_img = "";
+
+                                            ($part->find('td.descriptionSearch text', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 0)->plaintext ."second" : $item['title'] =$item_title = "";
+
+                                            ($part->find('td.descriptionSearch a', 0)) ? $item['part_no'] = $item_part = $part->find('td.descriptionSearch a', 0)->plaintext : $item['part_no'] = $item_part = "";
+                                            echo $item_title . "second";
+                                        }
+                                        
+                                        $item['description'] = $item_desc = "";
+                                        
+                                        ($part->find('span.modelPrice', 0)) ? $item['price']= $item_price = $part->find('span.modelPrice', 0)->innertext : $item['price']= $item_price = "";
+                                       
+
+                                        // take 30 % off
+                                        $item_price_percent=$item_price;
+                                        if(!empty($item_price)){
+                                            $item['price'] = (int) $item_price=str_replace("$","",$item_price);
+                                            $item['discounted_price'] = $item_price_percent=$item_price - ($item_price*0.3);
+                                        }
+                                        
+                                        $easyApplicaneItem[] = $item;
+                                        
+                                        echo "<tr>";
+                                        echo "<td> <img src='$item_img' height='100px' /></td>";
+                                        echo "<td> <h3>$item_title</h3>
+                                                <p>$item_desc</p>
+                                            </td>";
+                                        echo "<td><strong> $item_price</strong></td>";
+                                        echo "<td> <b style='color:green'>$item_price_percent</b></td>";
+                                        echo "</tr>";
+                                    }
+            
+                                echo "</table>";
+                            }
+                            elseif(strpos($html->plaintext,"No Results Found") !=true){
                                 echo "<h3 class='text-primary'>$model_title</h3>
                                 ";
                             }else{
