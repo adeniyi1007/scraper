@@ -2,7 +2,7 @@
 include_once "config.php";
 
 // $query = "SELECT * FROM `queue` where `status` = 1 LIMIT 0, 20";
-$query = "SELECT * FROM queue where type='flow_item_image' LIMIT 10";
+$query = "SELECT * FROM queue where type='flow_item_image' and status='1' LIMIT 10";
 $sql = mysqli_query($connection, $query);
 
 if (mysqli_num_rows($sql) > 0) {
@@ -21,7 +21,7 @@ if (mysqli_num_rows($sql) > 0) {
         $item_no=$explode[0];
         $sku=$explode[1];
         $img=$explode[3];
-            $url = "https://aascraper.xyz/uploadimage?itemno=$item_no&sku=$sku&imageurl=$img";
+            $url = "https://aascraper.xyz/uploadimage.php?itemno=$item_no&sku=$sku&imageurl=$img";
  
             $curl = curl_init();
             
@@ -35,6 +35,7 @@ if (mysqli_num_rows($sql) > 0) {
             $updateQuery1 = "UPDATE queue SET status='3',upload_date=NOW() WHERE id = $id";
             $updateSql1 = mysqli_query($connection, $updateQuery1);
         }
+        sleep(3);
     }
 
 }

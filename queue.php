@@ -63,6 +63,8 @@ echo '<h3>Total proccessed queue: ' .$proccessed. '</h3>';
                 $pending++;
             } elseif ($row['status'] == '2') {
                 $status = "Processing";
+            }elseif ($row['status'] == '4') {
+                $status = "Investigation";
             } else{
                 $status = "Proccessed";
             }

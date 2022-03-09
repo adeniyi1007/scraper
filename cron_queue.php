@@ -2,7 +2,7 @@
 include_once "config.php";
 
 // $query = "SELECT * FROM `queue` where `status` = 1 LIMIT 0, 20";
-$query = "SELECT * FROM queue where type!='flow_item_image' LIMIT 5";
+$query = "SELECT * FROM queue where type!='flow_item_image' and status='1' LIMIT 10";
 $sql = mysqli_query($connection, $query);
 
 if (mysqli_num_rows($sql) > 0) {
