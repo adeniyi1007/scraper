@@ -1,6 +1,6 @@
 <?php
 // just for test purpose, to test remove te underscrore
-// echo uploadItem("Item Final Test 2","8 .3654","Just a desc","imgLink","partNo","ModelNum",true);
+// echo uploadItem("Item Final Test 6","8 .3654","Just a desc","imgLink","partNo","ModelNum",true);
 
 function uploadItem($item_name,$item_price,$item_desc,$item_img,$item_part_no,$item_model_num,$uploadScrapedData=false){
     
@@ -8,10 +8,13 @@ function uploadItem($item_name,$item_price,$item_desc,$item_img,$item_part_no,$i
     $item_price=round($item_price);
 
     // assign an SKU
+    require_once("config.php");
 
-    $sql_q = mysqli_query($connection, "SELECT sku FROM sku where part_no='' order by id asc");
-    if (mysqli_num_rows($sql_q) > 0) {
-        while($row = $sql_q->fetch_assoc()) {
+    $sku="";
+    $query_sku = "SELECT sku FROM sku where part_no='' order by id asc";
+    $sql_sku = mysqli_query($connection, $query_sku);
+    if (mysqli_num_rows($sql_sku) > 0) {
+        while($row = $sql_sku->fetch_assoc()) {
             if (!empty($row['sku'])) {
                 $sku=$row['sku'];
             }
