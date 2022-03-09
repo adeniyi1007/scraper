@@ -1,16 +1,16 @@
 <?php
 
-// http://localhost/scraper/uploadimage?itemno=3042554000001096280&sku=393293242332&imageurl=https://www.reliableparts.ca/thumbnail/product/2572946/300/200&itemno=3042554000001096280
+http://localhost/scraper/uploadimage?itemno=3042554000001096280&sku=393293242332&imageurl=https://www.reliableparts.ca/thumbnail/product/2572946/300/200&itemno=3042554000001096280
 
 function fetchNewToken(){
     // refresh token was manually geenrated at first but will be used to generate subsequent tokens anytime the script runs since it does not expire.
 
-    $zohoRefreshToken="1000.ecb951e18f75ce7ed00c61fa3d400d9e.b38ddfcaf2770a659f6ca79142c638da";
+    $zohoRefreshToken="1000.817d0ab31b74037bf90223ef64a7dd43.c47f525e007c494e869426bff0ed294f";
     
     // Make a post request to Zoho using the refresh token
 
-    $client_id="1000.4JUJD0ZC6Y3NWB5AJ5BO2AXEEE8ZCN"; // created at api-console
-    $client_secret="2184e7cd4b4a0fa44b31c6f9d0dd69ae1299acfafc"; // created at api-console
+    $client_id="1000.0UZCJPQ3LY43ZEQJA87HGE4ZEWD8XR"; // created at api-console
+    $client_secret="7aa542eb4aa053319692da5d64fe6f5e630c11c594"; // created at api-console
 
     // call now
             // set post fields
@@ -70,7 +70,7 @@ function makeCurlFile($file){
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Authorization: Bearer 1000.aad5ed3ef5159703073f5e5aa26e202d.f45821c334cbea219c81f5889905b2c4'
+        'Authorization: Bearer '.$access_token
     ));
     //CURLOPT_SAFE_UPLOAD defaulted to true in 5.6.0
     //So next line is required as of php >= 5.6.0
