@@ -24,7 +24,7 @@ function uploadItem($item_name,$item_price,$item_desc,$item_img,$item_part_no,$i
         $data = [
             'item_scraped_name' => $item_name,
             'item_scraped_price' => $item_price,
-            'item_description' => $item_desc,
+            'item_description' => trim($item_desc),
             'item_img' => $item_img,
             'item_part_no' => $item_part_no,
             'item_model_no' => $item_model_num,
