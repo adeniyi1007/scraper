@@ -271,19 +271,19 @@ if(isset($_GET["submit"])){
                                     foreach($html->find('table.modelParts tbody tr') as $part) {
                                         
                                         if ($part->find('td.descriptionSearch a.modelImage', 0)) {
-                                            ($part->find('td.descriptionSearch text', 2)) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 2)->plaintext ."first": $item['title'] =$item_title = "";
+                                            ($part->find('td.descriptionSearch text', 2)) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 2)->plaintext : $item['title'] =$item_title = "";
 
                                             ($part->find('a.modelImage', 0)) ? $item['img'] = $item_img = $part->find('a.modelImage', 0)->href : $item['img'] = $item_img = "";
 
                                             ($part->find('td.descriptionSearch a', 1)) ? $item['part_no'] = $item_part = $part->find('td.descriptionSearch a', 1)->plaintext : $item['part_no'] = $item_part = "";
-                                            echo $item_title . "first";
+                                            // echo $item_title . "first";
                                         } else {
                                             $item['img'] = $item_img = "";
 
-                                            ($part->find('td.descriptionSearch text', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 0)->plaintext ."second" : $item['title'] =$item_title = "";
+                                            ($part->find('td.descriptionSearch text', 0)->plaintext) ? $item['title'] =$item_title    = $part->find('td.descriptionSearch text', 0)->plaintext : $item['title'] =$item_title = "";
 
                                             ($part->find('td.descriptionSearch a', 0)) ? $item['part_no'] = $item_part = $part->find('td.descriptionSearch a', 0)->plaintext : $item['part_no'] = $item_part = "";
-                                            echo $item_title . "second";
+                                            // echo $item_title . "second";
                                         }
                                         
                                         $item['description'] = $item_desc = "";
