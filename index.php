@@ -491,7 +491,7 @@ if(isset($_GET["submit"])){
 
     }
 
-    if($mode == 'scrapeupload'){
+    if($mode == 'scrapeupload' || isset($_GET["scrapeupload"])){
 
         echo "<h2>Upload Status Section </h2>";
         require("uploader.php");

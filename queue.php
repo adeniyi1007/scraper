@@ -47,6 +47,7 @@ echo '<h3>Total proccessed queue: ' .$proccessed. '</h3>';
     <thead>
         <tr>
             <th>ID</th>
+            <th>Job Type</th>
             <th>Model</th>
             <th>status</th>
             <th>Date</th>
@@ -66,9 +67,16 @@ echo '<h3>Total proccessed queue: ' .$proccessed. '</h3>';
                 $status = "Proccessed";
             }
 
+            $jobtype="Scrape Model";
+        
+            if ($row['type'] == 'flow_item_image') {
+                $jobtype="Scrape Image";
+            }
+
         ?>
         <tr>
             <td><?= $id ?></td>
+            <td><?= $jobtype ?></td>
             <td><?= $row['data']; ?></td>
             <td><?= $status ?></td>
             <td><?= $row['created'] ?></td>

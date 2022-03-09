@@ -2,7 +2,7 @@
 include_once "config.php";
 
 // $query = "SELECT * FROM `queue` where `status` = 1 LIMIT 0, 20";
-$query = "SELECT * FROM queue LIMIT 0, 20";
+$query = "SELECT * FROM queue where type!='flow_item_image' LIMIT 5";
 $sql = mysqli_query($connection, $query);
 
 if (mysqli_num_rows($sql) > 0) {
@@ -17,7 +17,7 @@ if (mysqli_num_rows($sql) > 0) {
         $updateQuery="UPDATE queue SET status='2' WHERE id = $id ";
         $updateSql = mysqli_query($connection, $updateQuery);
         $model = $row['data'];
-            $url = "https://aascraper.xyz/?submit=1&s=$model&scrapeupload=1";
+            $url = "https://aascraper.xyz/?submit=1&s=$model&scrapeupload=1&mode=scrape";
  
             $curl = curl_init();
             

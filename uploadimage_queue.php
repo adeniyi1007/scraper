@@ -10,7 +10,7 @@ if(isset($_GET["itemno"])){
 
     $query = "INSERT INTO 
     queue (type, data, attempt, error, upload_date)
-    VALUES ('flow_item_image','".$models."','','','')";
+    VALUES ('flow_item_image','".$data."','','','')";
     $sql= mysqli_query($connection, $query);
     if ($sql) {
     echo "saved";
