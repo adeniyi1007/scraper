@@ -31,7 +31,7 @@ function makeCurlFile($file){
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Authorization: Bearer 1000.3b26b3dd8139c4f2421baa1aab077037.2efca6845e23eb254a045cb4744ebc9c'
+        'Authorization: Bearer 1000.aad5ed3ef5159703073f5e5aa26e202d.f45821c334cbea219c81f5889905b2c4'
     ));
     //CURLOPT_SAFE_UPLOAD defaulted to true in 5.6.0
     //So next line is required as of php >= 5.6.0

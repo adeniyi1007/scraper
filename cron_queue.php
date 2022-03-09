@@ -28,7 +28,7 @@ if (mysqli_num_rows($sql) > 0) {
             $data = curl_exec($curl);
             
             curl_close($curl);
-            $updateQuery1 = "UPDATE queue SET status='3' WHERE id = $id";
+            $updateQuery1 = "UPDATE queue SET status='3',upload_date=NOW() WHERE id = $id";
             $updateSql1 = mysqli_query($connection, $updateQuery1);
         }
     }

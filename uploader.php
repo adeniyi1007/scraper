@@ -4,11 +4,13 @@
 
 function uploadItem($item_name,$item_price,$item_desc,$item_img,$item_part_no,$item_model_num,$uploadScrapedData=false){
     
+    //sleep for 3 seconds
+    sleep(5);
     $item_price=trim(str_replace("$","",$item_price));
     $item_price=round($item_price);
 
     // assign an SKU
-    require_once("config.php");
+    require("config.php");
 
     $sku="";
     $query_sku = "SELECT sku FROM sku where part_no='' order by id asc";
